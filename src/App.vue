@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     여기서부터 코드를 시작합니다!
-    Vue라우터 직접 만들기
+    <router-view></router-view>
   </div>
 </template>
 
