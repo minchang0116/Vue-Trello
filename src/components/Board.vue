@@ -1,6 +1,8 @@
 <template>
     <div>
         Board
+        <div v-if="loading">loading board...</div>
+        <div v-else>
         <div>
             bid: {{bid}}
         </div>
@@ -8,6 +10,7 @@
         <router-link :to="`/b/${bid}/c/2`">Card 2</router-link>
         <hr />
         <router-view></router-view>
+        </div>
     </div>
 </template>
 
@@ -15,11 +18,22 @@
 export default {
     data(){
         return {
-            bid:0
+            bid:0,
+            loading: false,
         }
     },
     created() {
-        this.bid = this.$route.params.bid
+        this.fetchData()
+    },
+    methods: {
+        fetchData(){
+            this.loading = true;
+            this.bid = this.$route.params.bid
+            setTimeout(()=>{
+                this.bid = this.$route.params.bid
+                this.loading = false
+            }, 500)
+        }
     }
 }
 </script>
