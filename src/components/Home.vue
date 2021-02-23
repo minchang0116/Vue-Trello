@@ -19,17 +19,23 @@
         </a>
       </div>
     </div>
+    <AddBoard v-if="isAddBoard" @close="isAddBoard=false" @submit="onAddBoard" />
   </div>
 </template>
 
 <script>
 import { board } from "../api";
-
+import AddBoard from './AddBoard.vue'
 export default {
+  components: {
+    AddBoard
+  },
   data() {
     return {
       loading: false,
       boards: [],
+      error: '',
+      isAddBoard: false,
     };
   },
   created() {
@@ -53,8 +59,12 @@ export default {
         });
     },
     addBoard() {
-      console.log("addBoard()");
+      this.isAddBoard = true;
     },
+    onAddBoard(title){
+      board.create(title)
+        .then(() => this.fetchData())
+    }
   },
 };
 </script>
@@ -76,6 +86,9 @@ export default {
   margin: 0 2% 20px 0;
   border-radius: 3px;
 }
+.board-item-new {
+  background-color: #ddd;
+}
 .board-item a {
   text-decoration: none;
   display: block;
@@ -84,7 +97,7 @@ export default {
 }
 .board-item a:hover,
 .board-item a:focus {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0,0,0, .1);
   color: #666;
 }
 .board-item-title {
