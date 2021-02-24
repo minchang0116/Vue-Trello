@@ -17,6 +17,9 @@ const mutations = {
         state.token = null
         delete localStorage.token
         setAuthInHeader(null)
+    },
+    SET_BOARD(state, board) {
+        state.board = board
     }
 }
 
