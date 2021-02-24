@@ -65,6 +65,9 @@ export default {
         this.loading= false
       })
     },
+    onAddBoard(){
+      this.fetchData()
+    }
   },
 };
 </script>
