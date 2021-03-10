@@ -12,6 +12,7 @@
 import {mapActions} from 'vuex'
 
 export default {
+  props: ['listId'],
   data() {
     return {
       inputTitle: ''
@@ -35,7 +36,10 @@ export default {
       ]),
       onSubmit(){
           if(this.invalidInput) return
-          const {inputTitle} = this
+          const {inputTitle, listId} = this
+          this.ADD_CARD({title: inputTitle, listId})
+            .finally(() => this.inputTitle = '' )
+
         },
       handlerClickOutSide(e){
         if(this.$el.contains(e.target)) return
