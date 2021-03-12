@@ -23,8 +23,6 @@
 <script>
 import {mapState, mapActions} from 'vuex'
 import List from './List.vue'
-import dragula from 'dragula'
-import 'dragula/dist/dragula.css'
 
 export default {  
     components: {
