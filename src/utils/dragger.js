@@ -13,16 +13,16 @@ const dragger = {
         let nextCard = null
 
         candidates.forEach((el, idx, arr)=>{
-            const id  = el.dataset.[type + 'Id'] * 1
-            if (cardId == targetCard.id){
-            prevCard = idx > 0 ?{
-                id: arr[idx - 1].dataset.cardId * 1,
-                pos: arr[idx -1].dataset.cardPos * 1,
-            } : null
-            nextCard = idx < arr.length - 1 ? {
-                id: arr[idx+1].dataset.cardId * 1,
-                pos: arr[idx+1].dataset.cardPos * 1,
-            } : null
+            const id  = el.dataset[type + 'Id'] * 1
+            if (cardId == targetCard.id) {
+                prevCard = idx > 0 ? {
+                    id: arr[idx - 1].dataset[type + 'Id'] * 1,
+                    pos: arr[idx - 1].dataset[type + 'Pos'] * 1,
+                } : null
+                nextCard = idx < arr.length - 1 ? {
+                    id: arr[idx + 1].dataset[type + 'Id'] * 1,
+                    pos: arr[idx + 1].dataset[type + 'Pos'] * 1,
+                } : null
             }
         })
 

@@ -1,97 +1,90 @@
 <template>
-    <div>
-        <div class="board-wrapper">
-            <div class="board">
-                <div class="board-header">
-                    <span class="board-title">{{board.title}}</span>
-                </div>
-                <div class="list-section-wrapper">
-                    <div class="list-section">
-                        <div class="list-wrapper" v-for="list in board.lists" :key="list.pos">
-                            <List :data="list" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div>
+    <div class="board-wrapper">
+      <div class="board">
+        <div class="board-header">
+          <span class="board-title">{{ board.title }}</span>
         </div>
-        <router-view>
-          
-        </router-view>
+        <div class="list-section-wrapper">
+          <div class="list-section">
+            <div
+              class="list-wrapper"
+              v-for="list in board.lists"
+              :key="list.pos"
+            >
+              <List :data="list" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <router-view> </router-view>
+  </div>
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex'
-import List from './List.vue'
+import { mapState, mapActions } from "vuex";
+import List from "./List.vue";
+import dragger from "../utils/dragger";
 
-export default {  
-    components: {
-        List
+export default {
+  components: {
+    List,
+  },
+  data() {
+    return {
+      bid: 0,
+      loading: false,
+      cDragger: null,
+    };
+  },
+  computed: {
+    ...mapState({
+      board: "board",
+    }),
+  },
+  created() {
+    this.fetchData();
+  },
+  updated() {
+    this.setCardDraggable();
+  },
+  methods: {
+    ...mapActions(["FETCH_BOARD", "UPDATE_CARD"]),
+    fetchData() {
+      this.loading = true;
+      this.FETCH_BOARD({ id: this.$route.params.bid }).then(
+        () => (this.loading = false)
+      );
     },
-    data(){
-        return {
-            bid:0,
-            loading: false,
-            dragulaCards: null,
-        }
-    },
-    computed: {
-        ...mapState({
-            board: 'board'
-        })
-    },
-    created() {
-        this.fetchData()
-    },
-    updated(){
-      if(this.dragulaCards) this.dragulaCards.destroy()
+    setCardDraggable() {
+      if (this.cDragger) this.cDragger.destroy();
+      this.cDragger = dragger.init(
+        Array.from(this.$el.querySelectorAll(".card-list"))
+      );
 
-
-      this.dragulaCards = dragula([
-        ...Array.from(this.$el.querySelectorAll('.card-list')) // 이렇게 하면 배열로 전달할 수 있습니다.
-      ]).on('drop', (el, wrapper, target, siblings) => {
+      this.cDragger.on("drop", (el, wrapper, target, siblings) => {
         const targetCard = {
           id: el.dataset.cardId * 1, // 문자열에서 숫자로 바꿔줌
-          pos: 65535
-        }
-        let prevCard = null
-        let nextCard = null
-        Array.from(wrapper.querySelectorAll('.card-item')) // 유사 배열이니깐 from으로 뽑아냄
-          .forEach((el, idx, arr)=>{
-            const cardId  = el.dataset.cardId * 1
-            if (cardId == targetCard.id){
-              prevCard = idx > 0 ?{
-                id: arr[idx - 1].dataset.cardId * 1,
-                pos: arr[idx -1].dataset.cardPos * 1,
-              } : null
-              nextCard = idx < arr.length - 1 ? {
-                id: arr[idx+1].dataset.cardId * 1,
-                pos: arr[idx+1].dataset.cardPos * 1,
-              } : null
-            }
+          pos: 65535,
+        };
+
+        const {prev, next} = dragger.sibling({
+          el, 
+          wrapper,
+          candidates: Array.from(wrapper.querySelectorAll(".card-item")),
+          type: 'card'
         })
-        if(!prevCard && nextCard) targetCard.pos = nextCard.pos / 2
-        else if(!nextCard && prevCard) targetCard.pos = prevCard.pos * 2
-        else if(prevCard && nextCard) targetCard.pos = (prevCard.pos + nextCard.pos) / 2
 
-        console.log(targetCard)
-        this.UPDATE_CARD(targetCard)
-      })
+        if (!prev && next) targetCard.pos = next.pos / 2;
+        else if (!next && prev) targetCard.pos = prev.pos * 2;
+        else if (prev && next) targetCard.pos = (prev.pos + next.pos) / 2;
 
+        this.UPDATE_CARD(targetCard);
+      });
     },
-    methods: {
-        ...mapActions([
-            'FETCH_BOARD',
-            'UPDATE_CARD'
-        ]),
-        fetchData(){
-            this.loading = true;
-            this.FETCH_BOARD({id: this.$route.params.bid})
-                .then(() => this.loading = false)
-
-        }
-    }
-}
+  },
+};
 </script>
 
 <style>
@@ -113,8 +106,8 @@ export default {
   margin: 0;
   height: 32px;
   line-height: 32px;
-} 
-.board-header input[type=text] {
+}
+.board-header input[type="text"] {
   width: 200px;
 }
 .board-header-btn {
@@ -127,7 +120,7 @@ export default {
 }
 .board-header-btn:hover,
 .board-header-btn:focus {
-  background-color: rgba(0,0,0,.15);
+  background-color: rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 .board-title {
