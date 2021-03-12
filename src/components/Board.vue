@@ -52,7 +52,7 @@ export default {
     this.fetchData().then(()=> {
       this.SET_THEME(this.board.bgColor)
     })
-     this.SET_IS_SHOW_BOARD_SETTINGS(false)
+    this.SET_IS_SHOW_BOARD_SETTINGS(false)
   },
   updated() {
     this.setCardDraggable();

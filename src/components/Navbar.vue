@@ -24,15 +24,15 @@ export default {
   watch: {
     'bodyColor': 'updateTheme'
   },
+    mounted() {
+      this.updateTheme()
+    },
   methods: {
     ...mapMutations(["LOGOUT"]),
     logout() {
       this.LOGOUT();
       this.$router.push("/login");
     },
-  },
-  mounted() {
-    this.updateTheme()
   },
   methods: {
     ...mapMutations([
@@ -46,9 +46,7 @@ export default {
       this.$el.style.backgroundColor = this.navbarColor
 
       const body = document.querySelector('body')
-      const container = document.querySelector('.container')
       if(body) body.style.backgroundColor = this.bodyColor
-      if(container) container.style.backgroundColor = this.bodyColor
     }
   }
 };
