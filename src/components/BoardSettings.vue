@@ -5,24 +5,34 @@
       <a class="header-close-btn" href="" @click.prevent="onClose">&times;</a>
     </div>
     <ul class="menu-list">
-      <li>Menu 1</li>
+      <li><a href="" @click.prevent="onDeleteBoard">Delete Board</a></li>
     </ul>
   </div>
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
+  computed: {
+      ...mapState({
+          board : 'board'
+      })
+  },
   methods: {
-    ...mapMutations([
-      'SET_IS_SHOW_BOARD_SETTINGS'
-    ]),
+    ...mapMutations(["SET_IS_SHOW_BOARD_SETTINGS"]),
+    ...mapActions(["DELETE_BOARD"]),
     onClose() {
-      this.SET_IS_SHOW_BOARD_SETTINGS(false)
-    }
-  }
-}
+      this.SET_IS_SHOW_BOARD_SETTINGS(false);
+    },
+    onDeleteBoard() {
+      if (!window.confirm(`Delete ${this.board.title} Board`)) return;
+      this.DELETE_BOARD({id: this.board.id})
+        .then(()=> this.SET_IS_SHOW_BOARD_SETTINGS(false))
+        .then(()=> this.$router.push('/'))
+    },
+  },
+};
 </script>
 
 <style>
@@ -33,7 +43,7 @@ export default {
   height: 100%;
   background-color: #edeff0;
   width: 300px;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 .board-menu-header {
   height: 46px;
@@ -44,7 +54,7 @@ export default {
   font-size: 18px;
   text-align: center;
   line-height: 46px;
-  font-weight:700;
+  font-weight: 700;
 }
 .header-close-btn {
   position: absolute;
@@ -72,7 +82,7 @@ export default {
 }
 .menu-list li:hover,
 .menu-list li:focus {
-  background-color: rgba(0,0,0, .1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .menu-list li a {
   text-decoration: none;
