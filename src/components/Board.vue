@@ -69,7 +69,7 @@ export default {
           pos: 65535,
         };
 
-        const {prev, next} = dragger.sibling({
+        const {prev, next} = dragger.siblings({
           el, 
           wrapper,
           candidates: Array.from(wrapper.querySelectorAll(".card-item")),
