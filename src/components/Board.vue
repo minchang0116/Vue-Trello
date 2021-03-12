@@ -15,6 +15,7 @@
               class="list-wrapper"
               v-for="list in board.lists"
               :key="list.pos"
+              :data-list-id="list.id"
             >
               <List :data="list" />
             </div>
@@ -48,6 +49,7 @@ export default {
       bid: 0,
       loading: false,
       cDragger: null,
+      lDragger: null,
       isEditTitle: false,
       inputTitle: ''
     };
@@ -67,13 +69,14 @@ export default {
   },
   updated() {
     this.setCardDraggable();
+    this.setListDraggable();
   },
   methods: {
     ...mapMutations([
       'SET_THEME',
       'SET_IS_SHOW_BOARD_SETTINGS'
     ]),
-    ...mapActions(["FETCH_BOARD", "UPDATE_CARD", "UPDATE_BOARD"]),
+    ...mapActions(["FETCH_BOARD", "UPDATE_CARD", "UPDATE_BOARD", "UPDATE_LIST"]),
     fetchData() {
       this.loading = true;
       return this.FETCH_BOARD({ id: this.$route.params.bid }).then(
@@ -89,6 +92,7 @@ export default {
       this.cDragger.on("drop", (el, wrapper, target, siblings) => {
         const targetCard = {
           id: el.dataset.cardId * 1, // 문자열에서 숫자로 바꿔줌
+          listId: wrapper.dataset.listId * 1,
           pos: 65535,
         };
 
@@ -125,6 +129,38 @@ export default {
       this.UPDATE_BOARD({id, title})
 
     },
+    setListDraggable(){
+      if (this.lDragger) this.lDragger.destroy();
+
+      const options = {
+        invalid: (el, handle) => !/^list/.test(handle.className)
+      }
+
+      this.lDragger = dragger.init(
+        Array.from(this.$el.querySelectorAll(".list-section")),
+        options
+      );
+
+      this.lDragger.on("drop", (el, wrapper, target, siblings) => {
+        const targetList = {
+          id: el.dataset.listId * 1,
+          pos: 65535,
+        };
+
+        const {prev, next} = dragger.siblings({
+          el, 
+          wrapper,
+          candidates: Array.from(wrapper.querySelectorAll(".list")),
+          type: 'list'
+        })
+
+        if (!prev && next) targetList.pos = next.pos / 2;
+        else if (!next && prev) targetList.pos = prev.pos * 2;
+        else if (prev && next) targetList.pos = (prev.pos + next.pos) / 2;
+
+        this.UPDATE_LIST(targetList);
+      });
+    }
   },
 };
 </script>

@@ -2,8 +2,8 @@ import dragular from 'dragula'
 import 'dragula/dist/dragula.css'
 
 const dragger = {
-    init(container) {
-        return dragular([...container])
+    init(container, options) {
+        return dragular([...container], options)
     },
     siblings({el, wrapper, candidates, type}) { // 배열 후보 candidates 
         // type list, card
