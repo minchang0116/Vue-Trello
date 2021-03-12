@@ -18,17 +18,23 @@ const actions = {
             commit('SET_BOARD', data.item)
         })
     },
+    UPDATE_BOARD({dispatch, state}, { id, title, bgColor }) {
+        return api.board.update(id, { title, bgColor })
+            .then(_ => dispatch('FETCH_BOARD', {id: state.board.id}))
+    }
+    ,
     DELETE_BOARD(_, { id }) {
         return api.board.destroy(id)
     },
-    UPDATE_BOARD({dispatch, state}, { id, title, bgColor }) {
-        return api.board.update(id, { title, bgColor })
-            .then(() => dispatch('FETCH_BOARD', {id: state.board.id}))
-    }
-    ,
+
+    ADD_LIST({dispatch, state}, { title, boardId, pos }) {
+        return api.list.create({ title, boardId, pos })
+        .then(_ => dispatch('FETCH_BOARD', {id: state.board.id}))
+    },
+
     ADD_CARD({ dispatch, state }, { title, listId, pos}) {
         return api.card.create(title, listId, pos)
-            .then(() => dispatch('FETCH_BOARD', {id: state.board.id}))
+            .then(_ => dispatch('FETCH_BOARD', {id: state.board.id}))
     },
     FETCH_CARD({ commit }, { id }) {
         return api.card.fetch(id).then(data => {
@@ -37,7 +43,7 @@ const actions = {
     },
     UPDATE_CARD({ dispatch, state }, { id, title, description, pos, listId }) {
         return api.card.update(id, { title, description, pos, listId })
-            .then(() => dispatch('FETCH_BOARD', {id: state.board.id}))
+            .then(_ => dispatch('FETCH_BOARD', {id: state.board.id}))
     },
     DELETE_CARD({dispatch, state}, { id }) {
         return api.card.destroy(id)

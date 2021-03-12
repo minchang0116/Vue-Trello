@@ -18,6 +18,9 @@
             >
               <List :data="list" />
             </div>
+            <div class="list-wrapper">
+              <AddList />
+            </div>
           </div>
         </div>
       </div>
@@ -30,12 +33,15 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 import List from "./List.vue";
+import AddList from "./AddList.vue";
 import BoardSettings from './BoardSettings.vue'
 import dragger from "../utils/dragger";
 
 export default {
   components: {
-    List, BoardSettings
+    List,
+    AddList,
+    BoardSettings
   },
   data() {
     return {
