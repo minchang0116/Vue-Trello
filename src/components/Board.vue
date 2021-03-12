@@ -3,7 +3,9 @@
     <div class="board-wrapper">
       <div class="board">
         <div class="board-header">
-          <span class="board-title">{{ board.title }}</span>
+          <input class="form-control" v-if="isEditTitle" type="text" v-model="inputTitle" 
+          ref="inputTitle" @blur="onSubmitTitle" @keyup.enter="onSubmitTitle">
+          <span v-else class="board-title" @click="onClickTitle">{{ board.title }}</span>
           <a class="board-header-btn show-menu" href="" @click.prevent="onShowSettings">
             ... Show Menu</a>
         </div>
@@ -40,6 +42,8 @@ export default {
       bid: 0,
       loading: false,
       cDragger: null,
+      isEditTitle: false,
+      inputTitle: ''
     };
   },
   computed: {
@@ -50,6 +54,7 @@ export default {
   },
   created() {
     this.fetchData().then(()=> {
+      this.inputTitle = this.board.title
       this.SET_THEME(this.board.bgColor)
     })
     this.SET_IS_SHOW_BOARD_SETTINGS(false)
@@ -62,7 +67,7 @@ export default {
       'SET_THEME',
       'SET_IS_SHOW_BOARD_SETTINGS'
     ]),
-    ...mapActions(["FETCH_BOARD", "UPDATE_CARD"]),
+    ...mapActions(["FETCH_BOARD", "UPDATE_CARD", "UPDATE_BOARD"]),
     fetchData() {
       this.loading = true;
       return this.FETCH_BOARD({ id: this.$route.params.bid }).then(
@@ -97,7 +102,23 @@ export default {
     },
     onShowSettings() {
       this.SET_IS_SHOW_BOARD_SETTINGS(true)
-    }
+    },
+    onClickTitle(){
+      this.isEditTitle = true
+      this.$nextTick(()=>this.$refs.inputTitle.focus())
+    },
+    onSubmitTitle(){
+      this.isEditTitle = false
+      this.inputTitle = this.inputTitle.trim()
+      if(!this.inputTitle) return
+
+      const id = this.board.id
+      const title =this.inputTitle
+      if(title === this.board.title) return
+
+      this.UPDATE_BOARD({id, title})
+
+    },
   },
 };
 </script>

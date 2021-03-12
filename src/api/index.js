@@ -39,11 +39,7 @@ export const board = {
     }
 }
 
-export const auth = {
-    login(email, password) {
-        return request('post', '/login', {email, password})
-    }
-}
+
 
 export const card = {
     create(title, listId, pos) {
@@ -57,5 +53,11 @@ export const card = {
     },
     destroy(id) {
         return request('delete', `/cards/${id}`)
+    }
+}
+
+export const auth = {
+    login(email, password) {
+        return request('post', '/login', {email, password})
     }
 }
